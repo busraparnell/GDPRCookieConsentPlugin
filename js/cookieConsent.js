@@ -29,6 +29,14 @@
         SetCookie(key, "", -1);
     } 
 
+    function CleanModal(id) {
+        id = '#' + id;
+        $(id).modal('hide');
+        $(id).on('hidden.bs.modal', function (e) {
+            $(this).modal('dispose');
+            $(id).remove();
+        });
+    }
 
     $.fn.gdprcookieconsent = function (options, event) {
 
@@ -56,28 +64,28 @@
                 {
                     key: 'second',
                     title: 'second',
-                    description: '',
+                    description: 'asd',
                     isFixed: false
                 },
                 {
                     key: 'third',
                     title: 'third',
-                    description: '',
+                    description: 'asd',
                     isFixed: false
                 },
                 {
                     key: 'forth',
                     title: 'forth',
-                    description: '',
+                    description: 'asd',
                     isFixed: false
                 }
             ]
         }, options);
 
         var testCookie = GetCookie('test');
-        var preferences = GetCookie('Preferences');
-        var $elmt = $(this);
-        if (!testCookie || !preferences || event == 'reinit') {
+        var userPreferences = GetCookie('Preferences');
+        var $elmnt = $(this);
+        if (!testCookie || !userPreferences || event == 'reinit') {
 
             CleanModal(settings.id);
 
@@ -85,14 +93,14 @@
             var modalButtons = '';
 
             if (settings.advanceOptions === true) {
-                modalButtons = '<button id = "' + settings.id + '-advance-button" type = "button" class = "btn btn-light">' + settings.advanceTitle + '</button><button id = "' + settings.id + '-accept-button" type = "button" class = "btn btn-dark" data-dismiss = "modal">' + settings.acceptButton + '</button>';
+                modalButtons = '<button id = "' + settings.id + '-advanced-button" type = "button" class = "btn btn-light">' + settings.advanceTitle + '</button><button id = "' + settings.id + '-accept-button" type = "button" class = "btn btn-dark" data-dismiss = "modal">' + settings.acceptButton + '</button>';
                 var selectAdvanceCookies = '';
-                preferences = JSON.parse(preferences);
+                preferences = JSON.parse(userPreferences);
                 $.each(settings.advanceCookies, function (index, area) {
                     if (area.key !== '' && area.title !== '') {
 
                         var cookieDisabled = '';
-                        if (area.isFixed !== true) {
+                        if (area.isFixed == true) {
                             cookieDisabled = ' checked="checked" disabled="disabled"';
                         }
 
@@ -102,21 +110,22 @@
                         }
 
                         var areaId = settings.id + '-option-' + area.key;
+
                         selectAdvanceCookies += '<li><input type = "checkbox" id="' + areaId + '" name= "gdprcookie[]" value="' + area.key + '" data-auto="on" ' + cookieDisabled + '><label name = "gdprcookie[]" data-toggle="tooltip" data-placement="right" for="' + areaId + '"' + cookieDescrptn + '>' + area.title + '</label></li>';
                     }
                 });
-                
-                modalBody = '<div id="' + settings.id + '-message">' + settings.message + '<a href="' + settings.link + '" target="_blank" rel="noopener noreferrer" id="' + settings.id + '-more-link">' + settings.linkLabel + '</a>'; + '</div>' + '<div id="' + settings.id + '-advanced-types" style="display:none; margin-top: 10px;"><h5 id="' + settings.id + '-advanced-title">' + settings.advanceTitle + '</h5>' + selectAdvanceCookies + '</div>';
+
+                modalBody = '<div id="' + settings.id + '-message">' + settings.message + '<a href="' + settings.link + '" target="_blank" rel="noopener noreferrer" id="' + settings.id + '-more-link">' + settings.linkLabel + '</a>' + '</div>' + '<div id="' + settings.id + '-advanced-types" style="display:none; margin-top: 10px;"><h5 id="' + settings.id + '-advanced-title">' + settings.advanceTitle + '</h5>' + selectAdvanceCookies + '</div>';
             }
             else {
                 modalButtons = '<button id = "' + settings.id + '-accept-button" type = "button" class = "btn btn-dark" data-dismiss = "modal">' + settings.acceptButton + '</button>';
-                modalBody = '<div id = "' + settings.id + '-message">' + settings.message + '<a href="' + settings.link + '" target="_blank" rel="noopener noreferrer" id="' + settings.id + '-more-link">' + settings.linkLabel + '</a>';  + '</div >';
+                modalBody = '<div id = "' + settings.id + '-message">' + settings.message + '<a href="' + settings.link + '" target="_blank" rel="noopener noreferrer" id="' + settings.id + '-more-link">' + settings.linkLabel + '</a>'; + '</div >';
             }
 
             var modal = '<div class="modal fade" id =  "' + settings.id + '"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id = "' + settings.id + '-title">' + settings.title + '</h4><button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body">' + modalBody + '</div > <div class="modal-footer">' + modalButtons + '</div></div></div></div>';
 
             setTimeout(function () {
-                $($elmt).append(modal);
+                $($elmnt).append(modal);
 
                 $('#' + settings.id).modal({ keyboard: false, backdrop: settings.backdrop });
 
@@ -135,26 +144,35 @@
             $('body').on('click', '#' + settings.id + '-accept-button', function () {
 
                 SetCookie('NewCookie', true, settings.expDay);
+
                 CleanModal(settings.id);
+
                 $('input[name="gdprcookie[]"][data-auto="on"]').prop('checked', true);
+
                 DeleteCookie('Preferences');
+
                 var preferences = [];
+
                 $.each($('input[name="gdprcookie[]"]').serializeArray(), function (i, area) {
                     preferences.push(area.value);
                 });
+
                 SetCookie('Preferences', JSON.stringify(preferences), 365);
+
                 settings.OnAccept.call(this);
+
             });
 
-            $('body').on('click', '#' + settings.id + '-advance-button', function () {
+            $('body').on('click', '#' + settings.id + '-advanced-button', function () {
+
                 $('input[name="gdprcookie[]"]:not(:disabled)').attr('data-auto', 'off').prop('checked', false);
 
-                $('label[name="gdprcookie[]"]').tooltip();
-                
+                $('label[name="gdprcookie[]"]').tooltip({ offset: '0, 10' });
+
                 $('#' + settings.id + '-advanced-types').slideDown('fast', function () {
-                    $('#' + settings.id + '-advance-button').prop('disabled', true);
+                    $('#' + settings.id + '-advanced-button').prop('disabled', true);
                 });
-                
+
             });
         }
 
@@ -167,15 +185,27 @@
             CleanModal(settings.id);
         }
 
-    }
+    }; 
 
-    function CleanModal(id) {
-        id = '#' + id;
-        $(id).modal('hide');
-        $(id).on('hidden.bs.modal', function (e) {
-            $(this).modal('dispose');
-            $(id).remove();
-        });
-    }
+    $.fn.gdprcookieconsent.GetPreferences = function () {
+        var preference = GetCookie('Preferences');
+        return JSON.parse(preference);
+    };
+
+    $.fn.gdprcookieconsent.IsPreferenceExist = function (prf) {
+        var pref = $.fn.gdprcookieconsent.GetPreferences();
+
+        if (GetCookie('test') === false) {
+            return false;
+        }
+
+        if (pref === false || pref.indexOf(prf) === -1) {
+            return false;
+        }
+
+        return true;
+
+    };
+    
 
 }(jQuery));
