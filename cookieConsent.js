@@ -57,7 +57,7 @@
             advanceCookies: [
                 {
                     key: 'Essential',
-                    title: 'first',
+                    title: '<a href="#" onclick="getCookie();"> Essential </a>',
                     description: 'Can\'t be disabled, website requires these cookies to work properly.',
                     isFixed: true
                 },
@@ -82,7 +82,7 @@
             ]
         }, options);
 
-        var testCookie = GetCookie('test');
+        var testCookie = GetCookie('testCookie');
         var userPreferences = GetCookie('Preferences');
         var $elmnt = $(this);
         if (!testCookie || !userPreferences || event == 'reinit') {

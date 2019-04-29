@@ -21,8 +21,42 @@
             moreLink: '/privacy/',
             delay: 100,
             advanceOptions: true,
+            OnAccept: function () {
+                var preferences = $.fn.gdprcookieconsent.GetPreferences();
+                console.log(preferences);
 
-        };
+            }
+        }
+            
+        var cookiesArray = document.cookie.split(";");
+
+        function getCookie() {
+            if (document.cookie.length != 0) {
+                var result = "<table border=1>";
+                result += "<tr> <th> Name </th> <th> Value </th> </tr>"
+
+                for (var i = 0; i < cookiesArray.length; i++) {
+                    var cookie = cookiesArray[i];
+                    var name = cookie.trim().split("=")[0];
+                    var value = cookie.trim().split("=")[1];
+                    result += "<tr><td>" + name + "</td><td>" + value + "</td></tr>"
+
+                }
+               
+                var myWindow = window.open("", "myWindow", "width=700,height=200");
+                myWindow.document.write(result);
+                result += "</table>";
+                return result;
+               
+            }
+            else {
+                alert("Cookies not found");
+            }
+           
+        }
+
+        console.log(cookiesArray);
+
         $(document).ready(function () {
             $('body').gdprcookieconsent(settings);
         });
