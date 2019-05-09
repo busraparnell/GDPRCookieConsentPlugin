@@ -159,7 +159,7 @@
 
                 SetCookie('Preferences', JSON.stringify(preferences), 365);
 
-                settings.OnAccept.call(this);
+                settings.onAccept.call(this);
 
             });
 

@@ -21,12 +21,11 @@
             moreLink: '/privacy/',
             delay: 100,
             advanceOptions: true,
-            onAccept: function (value) {
-                if (value != 'enabled' && value != 'accepted') {
-                    window.location = window.location.href;
+            onAccept: function () {
+                console.log(cookiesArray);
                 }
             }
-        }
+        
 
 
         var cookiesArray = document.cookie.split(";");
