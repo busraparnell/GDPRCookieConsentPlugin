@@ -195,7 +195,7 @@
     $.fn.gdprcookieconsent.IsPreferenceExist = function (prf) {
         var pref = $.fn.gdprcookieconsent.GetPreferences();
 
-        if (GetCookie('test') === false) {
+        if (GetCookie('testCookie') === false) {
             return false;
         }
 

@@ -22,7 +22,8 @@
             delay: 100,
             advanceOptions: true,
             onAccept: function () {
-                console.log(cookiesArray);
+                var preferences = JSON.parse(GetCookie('Preferences'));
+                console.log(preferences);
                 }
             }
         
